@@ -1,4 +1,4 @@
-package com.cache;
+package com.guava.cache;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -12,6 +12,10 @@ public class CacheService {
 
     private final LoadingCache<String, String> cache;
 
+    /**
+     *
+     * Guava 常用工具类
+     */
     public CacheService() {
         cache = CacheBuilder.newBuilder()
                 .concurrencyLevel(4)

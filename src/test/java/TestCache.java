@@ -1,4 +1,4 @@
-import com.cache.CacheService;
+import com.guava.cache.CacheService;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
