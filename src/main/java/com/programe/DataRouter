@@ -1,0 +1,60 @@
+Connection implements Runnable
+客户端与服务端建立连接后，执行 run()
+read(){
+    mChannel.read(buffer);
+    mResponse.doDataBack(buffer);
+}
+
+doDataBack(){
+    Message message = MessagePack.unpack(buffer);
+    MsgRegBean msg = unregister(message.packid); // 发送请求时注册，此时需要设置返回数据，比如拿到 receiver
+    msg.receiver.onDataRecv(message);
+}
+
+receiver 有各种形式
+之一：
+    PushCenterManager implements IReceiver // 主推
+    onDataRecv(message){
+        LinkedBlockingQueue<Message> queue = new LinckedBlockingQueue(100000);
+        queue.offer(message);
+    }
+之二：
+    SynReceiver implements IReceiver // 异步
+    onDataRecv(message){
+        mAnsMessage = data;
+        notifyLock() // 释放锁
+    }
+
+    QuoteAsyManager.getXxxData(,,,receiver); //异步，请求发送后要等待结果，先lock
+    receiver.lock();
+        lock(){
+            synchronized(object){
+                if(mAnsMessage == null){
+                    object.wait(30*1000); // 等待3秒
+                }
+            }
+        }
+    return (AnsXxx)receiver.getAnsMessage();
+之三：
+   UpdateRunnable implements Runnable  // 主推
+    run(){
+        UpdateSingleBuffer autopt = AutopushCenter.getInstance().getAutoPushUpdate("name"); // 获取订阅队列，队列中有一个 queue
+        getInstance() 中会开启一个线程去拿onDataRecv（message）插入到queue的数据
+        QuoteAutoMessgae  msg = mQueue,poll();
+            QuoteAutoMessage[QuoteMessage[DataHead,stream[]],type]
+        AnsXxx ansXxx = new AnsXxx(msg.getStream());
+
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
