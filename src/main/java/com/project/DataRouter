@@ -38,11 +38,20 @@ receiver 有各种形式
 之三：
    UpdateRunnable implements Runnable  // 主推
     run(){
+        // 取一个 TaskRunnale
+        TaskRunnable taskRunnable = manager.getTaskRunnable();
         UpdateSingleBuffer autopt = AutopushCenter.getInstance().getAutoPushUpdate("name"); // 获取订阅队列，队列中有一个 queue
         getInstance() 中会开启一个线程去拿onDataRecv（message）插入到queue的数据
-        QuoteAutoMessgae  msg = mQueue,poll();
-            QuoteAutoMessage[QuoteMessage[DataHead,stream[]],type]
-        AnsXxx ansXxx = new AnsXxx(msg.getStream());
+             QuoteAutoMessgae  msg = mQueue.poll();
+           //  QuoteAutoMessage 的数据结构 QuoteAutoMessage[QuoteMessage[DataHead,stream[]],type]
+             AnsXxx ansXxx = new AnsXxx(msg.getStream());
+             在 AutopushCenter 中有一个List<UpdateSingleBuffer> list
+             list.get(i).put(ansXxx);
+         realTimeData = autopt.get();
+         // 判断 realTimeData 的类型，接着将realTimeData 封装为一个AutoTaskBean对象，并添加到TaskRunnable的队列中
+         taskRunnable.addTask(new AutoTaskBean(realTimeData))
+         // 实际上是添加到了 CommBlockQueue<AutoTaskBean> queue
+         queue.offer(task);
 
 
 
