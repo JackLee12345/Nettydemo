@@ -52,9 +52,6 @@ receiver 有各种形式
          taskRunnable.addTask(new AutoTaskBean(realTimeData))
          // 实际上是添加到了 CommBlockQueue<AutoTaskBean> queue
          queue.offer(task);
-
-
-
     }
 
 
