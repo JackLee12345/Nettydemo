@@ -65,6 +65,7 @@ receiver 有各种形式
            CodeInfo codeInfo = realTimeData.getCodeInfo();
            // 每只票 都会有一个双向链表，双向链表上的每一个Node就是一个订阅该票的用户
            DoubleLinked doubleLinked = getDoubleLinked(code,type);
+           // PushPool 中有一个 Map<CodeInfo，DoubleLinked>
            // realTimeDataStreamToExStream 协议转换
            // 拿到发送队列，该队列是最终推送数据的队列
            CommBlockQueue<Object> queue = PushManager.getQueue();
@@ -98,6 +99,16 @@ receiver 有各种形式
     // ConcurrentHashMap<String,ClientChannel> uidChannelMap
     // 删除订阅
     SubscribeExt.remove(item.getUid());
+    // SubscribeExt中有一个Map<String,List<AutoUnit>> list，记录着用户订阅的股票，每个AutoUnit的市场类型不一样，也就是不同类型市场的股票在一个集合
+    // AutoUnit 中有一个List<NodeUnit> nodeUnits,记录着该用户订阅的某个市场的股票
+    // 遍历 nodeUnits，一个NodeUnit就是该用户订阅的一只股票，对应上面，每只股票会有一个双向链表维护着
+    // 在链表中是删除该 Node
+    nodeUnit.getDoubleLinked().deleteNode(nodeUnit.getNode);
+    // 最后从list中删掉AutoUnit
+    list.remove(autoUnit)
+
+
+
 
 
 
