@@ -36,7 +36,7 @@ receiver 有各种形式
         }
     return (AnsXxx)receiver.getAnsMessage();
 之三：
-   UpdateRunnable implements Runnable  // 主推
+   UpdateRunnable implements Runnable  // 获取当前行情更新的数据，放进任务队列
     run(){
         // 取一个 TaskRunnale
         TaskRunnable taskRunnable = manager.getTaskRunnable();
@@ -53,7 +53,19 @@ receiver 有各种形式
          // 实际上是添加到了 CommBlockQueue<AutoTaskBean> queue
          queue.offer(task);
     }
-    AutoTaskBean ----> QuoteItem
+    ---------------------------------------
+    --接着将 AutoTaskBean ----> QuoteItem--
+    ---------------------------------------
+    TaskRunnable implements Runnable  从行情服务器获取最新的数据，封装成主推任务
+    // TaskRunnable 中有一个 CommBlockQueue<AutoTaskBean> queue 接上
+    run(){
+        while(true){
+            AutoTaskBean = queue.take();
+        }
+
+    }
+
+
 
 
 
