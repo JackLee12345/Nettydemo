@@ -60,10 +60,45 @@ receiver 有各种形式
     // TaskRunnable 中有一个 CommBlockQueue<AutoTaskBean> queue 接上
     run(){
         while(true){
-            AutoTaskBean = queue.take();
+            AutoTaskBean = queue.take(); // AutoTaskBean 中有一个 Object realTimeData，对realTimeData 进行判断
+           //  例如: realTimeData instanceof RealTimeDataEx
+           CodeInfo codeInfo = realTimeData.getCodeInfo();
+           // 每只票 都会有一个双向链表，双向链表上的每一个Node就是一个订阅该票的用户
+           DoubleLinked doubleLinked = getDoubleLinked(code,type);
+           // realTimeDataStreamToExStream 协议转换
+           // 拿到发送队列，该队列是最终推送数据的队列
+           CommBlockQueue<Object> queue = PushManager.getQueue();
+           // 将转换后的数据构造成 QueueItem 对象
+           // QueueItem = [node.getUid()+IcommEvent（更新数据）]
+           queue.offer(QueueItem) // 从头结点遍历链表
         }
-
     }
+    -----------------------------------
+    -- 再接着，消费queue中的QueueItem--
+    -----------------------------------
+    PushManager 中开启一个线程池，执行 PushRunnable implements Runnable
+    run(){
+        while(true){
+            Object obj = PushManager.getQueue().take();
+            // 转换为 QueueItem
+            if(obj instanceof QueueItem){
+                QueueItem item = QueueItem.class.cast(obj);
+                // 开始推送
+                ClientChannel ch = item.getUid();
+                ICommEvent result = item.getOutput();
+                ch.write(result); // Macs向uas发送主推消息
+            }
+        }
+    }
+    -------------------------------------------
+    ------------如果Channel不存在--------------
+    -------------------------------------------
+    // Macs中删除uid与订阅链接的关系
+    ClientChannelManager.getInstance().removeClient(item.getUid());
+    // ConcurrentHashMap<String,ClientChannel> uidChannelMap
+    // 删除订阅
+    SubscribeExt.remove(item.getUid());
+
 
 
 
