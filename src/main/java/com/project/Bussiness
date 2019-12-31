@@ -21,17 +21,20 @@
             dealEvent(ICommEvent input,ClientChannel clientChannel){
                 // 将clientChannel封装到 InteractionImpl
                 Interaction ia = new InteractionImpl(clientChannel);
-                // 根据子系统号获取对应的模块服务类
+                // 根据子系统号获取对应的模块服务类，有MacsBusiModule(Macs服务模块)、MultiQuoteModule(综合行情模块).
                 ModuleService service = ModuleFactory.getModuleService(input.getSubSystemNo());
+                // ModuleFactory 中有一个 Map<Integer,ModuleService> map
                 // 如果 service ！= null
                 ICommEvent result = service.execute(ia.input);
                     {
-                       
-
+                        // 根据功能号拿到Action，ModuleService 中有一个Map<Integer,IAction> mActionMap
+                        IAction act = getModuleService(input.getFuncid());
+                        // 处理具体功能号，Action有 AutoPushAction、ChuquanDataAction、MacsSortAction..
+                        act.doAction(input,ic,retEvent);
                     }
                 channel.write(result);
             }
         }
-
     }
+
 
