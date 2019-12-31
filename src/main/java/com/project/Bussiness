@@ -1,0 +1,37 @@
+    // 启动各种协议的监听服务
+    Application.start();
+    // 根据连接类型启动对应的服务
+    List<ConnInfo> connInfoList = config.getConnInfoList();
+    // 遍历 connInfoList，取ConnInfo的 name,switch(name)，NIO 启动
+    // 添加Handlder, SocketChannel.pipeline().add(new CommEventReqBizHandler())
+    channelRead0(ChannelHandlerContext ctx,ICommEvent inputEvent){
+        // 根据通道上下文对象获取当前通道连接对象
+        ClientChannel clientChannel = ctx.channel.attr(AttributeConstant.CLIENT_CHANNEL).get();
+        // 将 inputEvent、clientChannel封装为一个MacsTask对象
+       // 业务处理
+        macsTask.proce(){
+            // 首先判断是否是系统事件，如果是，直接channel.write(retEvent)写回事件，系统事件根据inputEvent的funId判断
+            // 主要包括心跳处理、T2认证包、注册UID、监控功能、获取客户端IP
+            // 以注册为为例，主要操作，从inputEvent中拿到 uisStr、channelType
+            Long uid = Long.valueOf(uidStr);
+            ClientChannelManager.getInstance().addClient(uid,channelClient,channelType);
+            // 构造返回体
+            channel.write(retEvent);
+            // 如果不是系统事件，则为业务事件
+            dealEvent(ICommEvent input,ClientChannel clientChannel){
+                // 将clientChannel封装到 InteractionImpl
+                Interaction ia = new InteractionImpl(clientChannel);
+                // 根据子系统号获取对应的模块服务类
+                ModuleService service = ModuleFactory.getModuleService(input.getSubSystemNo());
+                // 如果 service ！= null
+                ICommEvent result = service.execute(ia.input);
+                    {
+                       
+
+                    }
+                channel.write(result);
+            }
+        }
+
+    }
+
