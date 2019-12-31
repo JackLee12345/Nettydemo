@@ -106,20 +106,3 @@ receiver 有各种形式
     nodeUnit.getDoubleLinked().deleteNode(nodeUnit.getNode);
     // 最后从list中删掉AutoUnit
     list.remove(autoUnit)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
