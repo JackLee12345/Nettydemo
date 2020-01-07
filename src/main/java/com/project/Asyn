@@ -1,0 +1,25 @@
+
+说一说异步
+    无返回参数
+    {
+         if(dispatcher!=null){
+                dispatcher.sendMessage(msg,receiver);
+                    // 请求注册,请求消息封装成MsgRegBean，添加进Map<Integer,MsgRegBean> mRegMap
+                    // channel.write(buffer);
+             }
+            // 构造请求失败数据
+            receiver.onDataRecv(data);
+
+    }
+    数据返回后
+    read(){
+        channel.read(buffer);
+
+
+
+
+    }
+
+
+
+
