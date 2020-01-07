@@ -14,11 +14,64 @@
     数据返回后
     read(){
         channel.read(buffer);
-
-
-
-
+        response.doDataBack(buffer);
     }
+
+    doDataBack(buffer){
+        Message msg = pack.unpack(buffer);
+        Msg mrb = ungister(msg.getPackId());
+        rmb.receiver.onDataRecv(msg);
+    }
+
+    onDataRecv() 有两种
+    其一：
+   private Object mLock = new Object();
+    onDataRecv(Message message){
+        mAnsMessage = message;
+        notifyLock();
+    }
+
+    notify(){
+        synchronized(mLock){
+            mLock.notify();
+        }
+    }
+
+    Message getAnsMsg(){
+        return mAnsMessage;
+    }
+
+    lock(){
+        synchronized(mLock){
+            if(mAnsMessage == null){
+                try{
+                    mLock.wait(2*1000);
+                }catch(InterruptedException e){
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    ------------------------------------------
+    发送请求
+    SynReceive receiver = new SynReceiver();
+    postMessage(msg,receiver);
+    // postMessage
+    public static void postMessage(Message message,IReceiver receiver){
+         dispatcher.sendMessage(msg,receiver);
+         if(dispatcher!=null){
+            dispatcher.sendMessage(msg,receiver);
+         }else{
+            receiver.onDataBack(new Message("error"));
+         }
+    }
+    if(receiver.getAnsMsg()==null){
+        receiver.lock();
+    }
+    return recriver.getAnsMsg();
+
+
 
 
 
