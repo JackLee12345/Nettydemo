@@ -9,7 +9,6 @@
              }
             // 构造请求失败数据
             receiver.onDataRecv(data);
-
     }
     数据返回后
     read(){
